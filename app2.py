@@ -5,8 +5,8 @@ import os
 from random import randint
 from plot import graph
 from map_plot import mapWidget
-from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QApplication, QWidget, QLineEdit , QListWidget, QFrame
-from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout,QGridLayout, QLabel, QPushButton, QApplication, QWidget, QLineEdit , QListWidget, QFrame
+from PyQt5.QtGui import QIcon, QPixmap , QTextCursor
 from PyQt5.QtCore import QRect, QPropertyAnimation
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -217,17 +217,32 @@ class MainWindow(QtWidgets.QMainWindow):
     #----------------------------------------------------------------------------------
     #telemetry widget
         #cmd
-        self.tele_cmd = QLabel('tele_cmd:')
-        self.tele_text= QLabel('tele_text')
-        tele_layout = QVBoxLayout()
-        tele_layout.addWidget(self.tele_cmd)
-        tele_layout.addWidget(self.tele_text)
-
+       
+        
+        tele_layout = QGridLayout() 
+        self.tele_cmd_textbox =  QLineEdit()
+        self.tele_cmd_textbox.setStyleSheet("background-color: black ;border: 0px ;color: white")
+        
+        
+        self.tele_cmd_textbox.returnPressed.connect(self.OnReturnPressed)
 
         self.tele_widget = QtWidgets.QWidget()
-        self.tele_widget.setLayout(tele_layout)
-        self.tele_widget.setStyleSheet("background-color: #005975")
+        self.tele_widget.setStyleSheet("background-color: #222222")
+        tele_layout.addWidget(self.tele_cmd_textbox,1,1,1,4)
+        
 
+        self.logOutput = QtWidgets.QTextEdit()
+        self.logOutput.setReadOnly(True)
+        self.logOutput.setStyleSheet("background-color: black ;border: 0px ;color: white")
+        self.logOutput.setLineWrapMode(QtWidgets.QTextEdit.NoWrap)
+
+        font = self.logOutput.font()
+        font.setFamily("Courier")
+        font.setPointSize(10)
+        tele_layout.addWidget(self.logOutput,2,1,9,5)
+        
+        self.tele_widget.setLayout(tele_layout)
+  
 
 
         #twends----------------
@@ -264,6 +279,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.timer.timeout.connect(self.update)
         self.timer.start()
 
+    
+    def OnReturnPressed(self):
+            """ the text is retrieved from tele_cmd_textbox """
+            text = self.tele_cmd_textbox.text()
+            # do some thing withit
+            self.log_output(text+"\n")
+
+    def log_output(self,text):
+            self.logOutput.moveCursor(QTextCursor.End)
+            self.logOutput.insertPlainText(text)
+            sb = self.logOutput.verticalScrollBar()
+            sb.setValue(sb.maximum())
+             
 
 
 
