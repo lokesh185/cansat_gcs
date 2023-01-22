@@ -1,0 +1,4 @@
+add gps text on top 
+add longitude text
+add latitude text
+add packet_count
